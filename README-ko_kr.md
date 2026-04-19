@@ -41,8 +41,8 @@ React Native에서 이미지 갤러리나 콘텐츠 뷰어를 구현할 때, 복
 
 ### 🤖 AI
 
-- [llms.txt](https://react-native-gesture-image-viewer.pages.dev/llms.txt): 문서의 모든 페이지에 대한 제목, 링크 및 간단한 설명이 포함된 구조화된 색인 파일입니다.
-- [llms-full.txt](https://react-native-gesture-image-viewer.pages.dev/llms-full.txt): 모든 문서 페이지의 전체 내용을 하나의 파일로 합친 전체 내용 파일입니다.
+- [llms.txt](https://react-native-gesture-image-viewer.pages.dev/ko/llms.txt): 문서의 모든 페이지에 대한 제목, 링크 및 간단한 설명이 포함된 구조화된 색인 파일입니다.
+- [llms-full.txt](https://react-native-gesture-image-viewer.pages.dev/ko/llms-full.txt): 모든 문서 페이지의 전체 내용을 하나의 파일로 합친 전체 내용 파일입니다.
 
 ### 기본 사용법
 
