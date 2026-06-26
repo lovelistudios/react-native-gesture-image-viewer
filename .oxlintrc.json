@@ -10,18 +10,18 @@
   "rules": {
     "react/react-in-jsx-scope": "off",
     "react/style-prop-object": "off",
+    "react/react-compiler": "off",
     "import/no-unassigned-import": ["error", { "allow": ["**/*.css"] }]
   },
   "settings": {
     "jsx-a11y": {
-      "polymorphicPropName": null,
       "components": {},
       "attributes": {}
     },
     "react": {
       "formComponents": [],
       "linkComponents": [],
-      "version": null,
+      "version": "19.2.0",
       "componentWrapperFunctions": []
     },
     "jsdoc": {
