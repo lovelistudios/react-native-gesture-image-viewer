@@ -102,6 +102,7 @@ export const useGestureViewer = <ItemT, LC>({
   const hasActiveFocal = useSharedValue(false);
 
   const dataLength = data?.length || 0;
+  const previousDataLengthRef = useRef(dataLength);
 
   const animationConfig = useMemo(
     () => ({
@@ -291,6 +292,10 @@ export const useGestureViewer = <ItemT, LC>({
   }, [manager]);
 
   useEffect(() => {
+    const hasDataLengthChanged = previousDataLengthRef.current !== dataLength;
+    const hasValidInitialIndex = initialIndex >= 0 && initialIndex < dataLength;
+
+    previousDataLengthRef.current = dataLength;
     translateY.set(0);
     translateX.set(0);
     scale.set(1);
@@ -298,7 +303,11 @@ export const useGestureViewer = <ItemT, LC>({
     startScale.set(1);
     rotation.set(0);
 
-    if (adjustedInitialIndex <= 0 || !listRef.current) {
+    if (
+      !hasValidInitialIndex ||
+      (!hasDataLengthChanged && adjustedInitialIndex <= 0) ||
+      !listRef.current
+    ) {
       return;
     }
 
@@ -307,6 +316,8 @@ export const useGestureViewer = <ItemT, LC>({
     });
   }, [
     adjustedInitialIndex,
+    dataLength,
+    initialIndex,
     translateY,
     backdropOpacity,
     translateX,
@@ -811,32 +822,34 @@ export const useGestureViewer = <ItemT, LC>({
     return Gesture.Native().requireExternalGestureToFail(dismissGestureRef);
   }, []);
 
-  const { onMomentumScrollEnd, onScroll, onScrollBeginDrag, onWebClick } = useGestureViewerPaging({
-    adjustedInitialIndex,
-    autoPlay,
-    autoPlayInterval,
-    currentIndex,
-    dataLength,
-    enableDoubleTapZoom,
-    enableHorizontalSwipe,
-    enableLoop,
-    height,
-    isRotated,
-    isZoomed,
-    itemSpacing,
-    manager,
-    maxZoomScale,
-    onSingleTap: emitSingleTap,
-    scale,
-    scrollTo,
-    syncCurrentIndex,
-    syncPendingIndex,
-    translateX,
-    translateY,
-    width,
-  });
+  const { activeListIndex, onMomentumScrollEnd, onScroll, onScrollBeginDrag, onWebClick } =
+    useGestureViewerPaging({
+      adjustedInitialIndex,
+      autoPlay,
+      autoPlayInterval,
+      currentIndex,
+      dataLength,
+      enableDoubleTapZoom,
+      enableHorizontalSwipe,
+      enableLoop,
+      height,
+      isRotated,
+      isZoomed,
+      itemSpacing,
+      manager,
+      maxZoomScale,
+      onSingleTap: emitSingleTap,
+      scale,
+      scrollTo,
+      syncCurrentIndex,
+      syncPendingIndex,
+      translateX,
+      translateY,
+      width,
+    });
 
   return {
+    activeListIndex,
     animatedStyle,
     backdropStyle,
     dataLength,

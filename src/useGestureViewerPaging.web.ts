@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, type MouseEvent } from 'react';
+import { useCallback, useEffect, useRef, useState, type MouseEvent } from 'react';
 import type { NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 
 import type {
@@ -50,6 +50,9 @@ export function useGestureViewerPaging({
   translateY,
   width,
 }: UseGestureViewerPagingArgs): UseGestureViewerPagingResult {
+  const [activeListIndex, setActiveListIndex] = useState(adjustedInitialIndex);
+  const activeResetItemSpacing = adjustedInitialIndex > 0 ? itemSpacing : 0;
+  const activeResetWidth = adjustedInitialIndex > 0 ? width : 0;
   const webSingleTapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const webScrollRuntimeRef = useRef<WebScrollRuntime>({
@@ -187,6 +190,7 @@ export function useGestureViewerPaging({
       runtime.latestOffsetX = settledPhysicalIndex * (width + itemSpacing);
       runtime.actor = 'idle';
       manager?.cancelPendingLoopTransition();
+      setActiveListIndex(settledPhysicalIndex);
       syncCurrentIndex(logicalIndex);
 
       if (settledByActor === 'user') {
@@ -227,19 +231,33 @@ export function useGestureViewerPaging({
     runtime.actor = 'idle';
     runtime.isAutoplayPausedByUser = false;
     runtime.lastSettledPhysicalIndex = adjustedInitialIndex;
-    runtime.latestOffsetX = adjustedInitialIndex * (width + itemSpacing);
+    runtime.latestOffsetX = adjustedInitialIndex * (activeResetWidth + activeResetItemSpacing);
     runtime.latestRawPhysicalIndex = adjustedInitialIndex;
     runtime.lastProgrammaticScrollVersion = manager?.getProgrammaticScrollVersion() ?? 0;
+    setActiveListIndex(adjustedInitialIndex);
     clearWebSettleTimer();
     clearWebAutoplayResumeTimer();
   }, [
+    activeResetItemSpacing,
+    activeResetWidth,
     adjustedInitialIndex,
     clearWebAutoplayResumeTimer,
     clearWebSettleTimer,
-    itemSpacing,
+    dataLength,
     manager,
-    width,
   ]);
+
+  useEffect(() => {
+    const runtime = webScrollRuntimeRef.current;
+
+    runtime.actor = 'idle';
+    runtime.isAutoplayPausedByUser = false;
+    runtime.latestOffsetX = runtime.lastSettledPhysicalIndex * (width + itemSpacing);
+    runtime.latestRawPhysicalIndex = runtime.lastSettledPhysicalIndex;
+    runtime.lastProgrammaticScrollVersion = manager?.getProgrammaticScrollVersion() ?? 0;
+    clearWebSettleTimer();
+    clearWebAutoplayResumeTimer();
+  }, [clearWebAutoplayResumeTimer, clearWebSettleTimer, itemSpacing, manager, width]);
 
   useEffect(() => {
     return () => {
@@ -426,6 +444,7 @@ export function useGestureViewerPaging({
   );
 
   return {
+    activeListIndex,
     onMomentumScrollEnd,
     onScroll,
     onScrollBeginDrag,
