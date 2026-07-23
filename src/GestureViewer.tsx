@@ -134,7 +134,7 @@ export function GestureViewer<ItemT, LC>({
   );
 
   const gesture = useMemo(() => {
-    return Gesture.Race(dismissGesture, zoomGesture);
+    return Gesture.Simultaneous(dismissGesture, zoomGesture);
   }, [zoomGesture, dismissGesture]);
 
   useEffect(() => {

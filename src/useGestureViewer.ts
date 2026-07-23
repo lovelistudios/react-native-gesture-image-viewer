@@ -787,7 +787,7 @@ export const useGestureViewer = <ItemT, LC>({
   );
 
   const zoomGesture = useMemo(
-    () => Gesture.Race(zoomPinchGesture, Gesture.Exclusive(zoomPanGesture, tapGesture)),
+    () => Gesture.Simultaneous(zoomPinchGesture, Gesture.Exclusive(zoomPanGesture, tapGesture)),
     [zoomPinchGesture, zoomPanGesture, tapGesture],
   );
 
